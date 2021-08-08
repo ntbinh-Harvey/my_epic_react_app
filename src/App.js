@@ -1,102 +1,71 @@
-/** @jsx jsx */
-import { Logo } from "components/Logo";
-import { Button, Input, FormGroup } from "components/styleComponent";
-import { Modal, ModalOpenButton, ModalContents } from "components/Modal";
-import { jsx } from "@emotion/react";
-import {cloneElement} from "react"
-
-function LoginForm({onSubmit, submitButton}) {
-  function handleSubmit(event) {
-    event.preventDefault()
-    const {username, password} = event.target.elements
-
-    onSubmit({
-      username: username.value,
-      password: password.value,
-    })
-  }
-
-  return (
-    <form
-      css={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'stretch',
-        '> div': {
-          margin: '10px auto',
-          width: '100%',
-          maxWidth: '300px',
-        },
-      }}
-      onSubmit={handleSubmit}
-    >
-      <FormGroup>
-        <label htmlFor="username">Username</label>
-        <Input id="username" />
-      </FormGroup>
-      <FormGroup>
-        <label htmlFor="password">Password</label>
-        <Input id="password" type="password" />
-      </FormGroup>
-      <div>{cloneElement(submitButton, {type: 'submit'})}</div>
-    </form>
-  )
-}
+/** @jsxImportSource @emotion/react */
+import { BrowserRouter as Router } from "react-router-dom";
+import { FullPageSpinner } from "components/lib";
+import { useAsync } from "utils/hooks";
+import { Authenticated } from "screens/Authenticated";
+import { Unauthenticated } from "screens/Unauthenticated";
+import { useEffect } from "react";
+import * as colors from "./styles/colors";
+import * as auth from "auth-provider";
+import { authFirebase } from "utils/firebase";
 
 function App() {
-  function login(formData) {
-    console.log('login', formData)
+  const {
+    run,
+    isLoading,
+    isIdle,
+    isError,
+    isSuccess,
+    data: user,
+    error,
+    setData,
+  } = useAsync();
+  const login = (form) => auth.login(form).then((user) => setData(user));
+  const register = (form) =>
+    auth
+      .register(form)
+      .then((user) => {
+        setData(user);
+      })
+      .catch((error) => Promise.reject(error));
+  const logout = () => {
+    auth.logout();
+    setData(null);
+  };
+  useEffect(() => {
+    authFirebase.onAuthStateChanged((user) => run(Promise.resolve(user)));
+  }, [run]);
+  if (isLoading || isIdle) {
+    return <FullPageSpinner />;
   }
-
-  function register(formData) {
-    console.log('register', formData)
-  }
-  return (
-    <div
-      css={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        width: "100%",
-        height: "100vh",
-      }}
-      className="App"
-    >
-      <Logo width="80" height="80" />
-      <h1>Bookshelf</h1>
+  if (isError) {
+    return (
       <div
         css={{
-          display: "grid",
-          gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-          gridGap: "0.75rem",
+          color: colors.danger,
+          height: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
         }}
       >
-        <Modal>
-          <ModalOpenButton>
-            <Button variant="primary">Login</Button>
-          </ModalOpenButton>
-          <ModalContents aria-label="Login form" title="Login">
-            <LoginForm
-              onSubmit={login}
-              submitButton={<Button variant="primary">Login</Button>}
-            />
-          </ModalContents>
-        </Modal>
-        <Modal>
-          <ModalOpenButton>
-            <Button variant="secondary">Register</Button>
-          </ModalOpenButton>
-          <ModalContents aria-label="Registration form" title="Register">
-            <LoginForm
-              onSubmit={register}
-              submitButton={<Button variant="secondary">Register</Button>}
-            />
-          </ModalContents>
-        </Modal>
+        <p>There are some errors. Please try again</p>
+        <pre>{error.message}</pre>
       </div>
-    </div>
-  );
+    );
+  }
+  if (isSuccess) {
+    const props = { user, login, register, logout };
+    // 🐨 wrap the BrowserRouter around the AuthenticatedApp
+    return user ? (
+      <Router>
+        <Authenticated {...props} />
+      </Router>
+    ) : (
+      <Unauthenticated {...props} />
+    );
+  }
 }
 
 export default App;

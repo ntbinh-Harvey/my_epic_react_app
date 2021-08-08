@@ -1,9 +1,8 @@
-/** @jsx jsx */
-import {jsx} from '@emotion/react'
+/** @jsxImportSource @emotion/react */
 
 import * as React from 'react'
 import VisuallyHidden from '@reach/visually-hidden'
-import {Dialog, CircleButton} from './styleComponent'
+import {Dialog, CircleButton} from './lib'
 
 const callAll =
   (...fns) =>

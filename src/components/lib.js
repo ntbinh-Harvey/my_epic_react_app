@@ -1,9 +1,11 @@
+/** @jsxImportSource @emotion/react */
 import styled from '@emotion/styled/macro'
 import {keyframes} from '@emotion/react'
 import {FaSpinner} from 'react-icons/fa'
 import {Dialog as ReachDialog} from '@reach/dialog'
 import * as colors from 'styles/colors'
 import * as mq from 'styles/media-queries'
+import {Link as RouterLink} from 'react-router-dom'
 
 const spin = keyframes({
   '0%': {transform: 'rotate(0deg)'},
@@ -76,4 +78,62 @@ const FormGroup = styled.div({
   flexDirection: 'column',
 })
 
-export {Button, Input, CircleButton, Dialog, FormGroup, Spinner}
+const Link = styled(RouterLink)({
+  color: colors.indigo,
+  ':hover': {
+    color: colors.indigoDarken10,
+    textDecoration: 'underline',
+  },
+})
+
+const BookListUL = styled.ul({
+  listStyle: 'none',
+  padding: '0',
+  display: 'grid',
+  gridTemplateRows: 'repeat(auto-fill, minmax(100px, 1fr))',
+  gridGap: '1em',
+})
+
+function FullPageSpinner() {
+  return (
+    <div
+      css={{
+        fontSize: '4em',
+        height: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    >
+      <Spinner />
+    </div>
+  )
+}
+
+const errorMessageVariants = {
+  stacked: {display: 'block'},
+  inline: {display: 'inline-block'},
+}
+
+function ErrorMessage({error, variant = 'stacked', ...props}) {
+  return (
+    <div
+      role="alert"
+      css={[{color: colors.danger}, errorMessageVariants[variant]]}
+      {...props}
+    >
+      <span>There was an error: {error.code ? error.code : null}</span>
+      <pre
+        css={[
+          {whiteSpace: 'break-spaces', margin: '0', marginBottom: -5},
+          errorMessageVariants[variant],
+        ]}
+      >
+        {error.message}
+      </pre>
+    </div>
+  )
+}
+
+export {Button, Input, CircleButton, Dialog, FormGroup, Spinner, FullPageSpinner, Link, BookListUL, ErrorMessage}
