@@ -1,46 +1,60 @@
 /** @jsxImportSource @emotion/react */
 
-// We're going to turn the entire book row into a link to the book page
-// 🐨 import the Link component from react-router-dom
-import {Link} from 'react-router-dom'
-import * as mq from 'styles/media-queries'
-import * as colors from 'styles/colors'
+import { Link } from "react-router-dom";
+import {useQuery} from "react-query"
+// 🐨 get useQuery from react-query
+// 🐨 you'll also need the client from 'utils/api-client'
+import { client } from "utils/api-client";
+import * as mq from "styles/media-queries";
+import * as colors from "styles/colors";
+import { StatusButtons } from "./status-buttons";
+import { Rating } from "./rating";
 
-function BookRow({book}) {
-  const {title, author, coverImageUrl} = book
+function BookRow({ user, book }) {
+  const { title, author, coverImageUrl } = book;
 
-  const id = `book-row-book-${book.id}`
+  const { data: listItems } = useQuery({
+    queryKey: "list-items",
+    queryFn: () =>
+      client("list-items", { token: user.token }).then(
+        (data) => data.listItems
+      ),
+  });
+  // 🐨 call useQuery here to get the list item
+  // queryKey should be 'list-items'
+  // queryFn should be a call to the list-items endpoint
+
+  // 🐨 assign listItem to the list item that has the same bookId as the book.id
+  const listItem = listItems?.find((item) => item.bookId === book.id) ?? null;
+
+  const id = `book-row-book-${book.id}`;
 
   return (
     <div
       css={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'flex-end',
-        position: 'relative',
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "flex-end",
+        position: "relative",
       }}
     >
-      {/*
-          🐨 Turn this div into a Link
-          and add a to prop to make it direct to `/book/${book.id}`
-      */}
       <Link
-        to={`/book/${book.id}`}
         aria-labelledby={id}
+        to={`/book/${book.id}`}
         css={{
           minHeight: 270,
           flexGrow: 2,
-          display: 'grid',
-          gridTemplateColumns: '140px 1fr',
+          display: "grid",
+          gridTemplateColumns: "140px 1fr",
           gridGap: 20,
           border: `1px solid ${colors.gray20}`,
           color: colors.text,
-          padding: '1.25em',
-          borderRadius: '3px',
-          ':hover,:focus': {
-            textDecoration: 'none',
-            boxShadow: '0 5px 15px -5px rgba(0,0,0,.08)',
-            color: 'inherit',
+          padding: "1.25em",
+          borderRadius: "3px",
+          ":hover,:focus": {
+            textDecoration: "none",
+            boxShadow: "0 5px 15px -5px rgba(0,0,0,.08)",
+            color: "inherit",
           },
         }}
       >
@@ -55,29 +69,32 @@ function BookRow({book}) {
           <img
             src={coverImageUrl}
             alt={`${title} book cover`}
-            css={{maxHeight: '100%', width: '100%'}}
+            css={{ maxHeight: "100%", width: "100%" }}
           />
         </div>
-        <div css={{flex: 1}}>
-          <div css={{display: 'flex', justifyContent: 'space-between'}}>
-            <div css={{flex: 1}}>
+        <div css={{ flex: 1 }}>
+          <div css={{ display: "flex", justifyContent: "space-between" }}>
+            <div css={{ flex: 1 }}>
               <h2
                 id={id}
                 css={{
-                  fontSize: '1.25em',
-                  margin: '0',
+                  fontSize: "1.25em",
+                  margin: "0",
                   color: colors.indigo,
                 }}
               >
                 {title}
               </h2>
+              {listItem?.finishDate ? (
+                <Rating user={user} listItem={listItem} />
+              ) : null}
             </div>
-            <div css={{marginLeft: 10}}>
+            <div css={{ marginLeft: 10 }}>
               <div
                 css={{
-                  marginTop: '0.4em',
-                  fontStyle: 'italic',
-                  fontSize: '0.85em',
+                  marginTop: "0.4em",
+                  fontStyle: "italic",
+                  fontSize: "0.85em",
                 }}
               >
                 {author}
@@ -85,13 +102,27 @@ function BookRow({book}) {
               <small>{book.publisher}</small>
             </div>
           </div>
-          <small css={{whiteSpace: 'break-spaces', display: 'block'}}>
+          <small css={{ whiteSpace: "break-spaces", display: "block" }}>
             {book.synopsis.substring(0, 500)}...
           </small>
         </div>
       </Link>
+      <div
+        css={{
+          marginLeft: "20px",
+          position: "absolute",
+          right: -20,
+          color: colors.gray80,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-around",
+          height: "100%",
+        }}
+      >
+        <StatusButtons user={user} book={book} />
+      </div>
     </div>
-  )
+  );
 }
 
-export {BookRow}
+export { BookRow };

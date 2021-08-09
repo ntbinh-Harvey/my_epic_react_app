@@ -1,15 +1,39 @@
 /** @jsxImportSource @emotion/react */
+
+import {Link as RouterLink} from 'react-router-dom'
 import styled from '@emotion/styled/macro'
 import {keyframes} from '@emotion/react'
-import {FaSpinner} from 'react-icons/fa'
-import {Dialog as ReachDialog} from '@reach/dialog'
 import * as colors from 'styles/colors'
 import * as mq from 'styles/media-queries'
-import {Link as RouterLink} from 'react-router-dom'
+import {Dialog as ReachDialog} from '@reach/dialog'
+import {FaSpinner} from 'react-icons/fa'
 
 const spin = keyframes({
   '0%': {transform: 'rotate(0deg)'},
   '100%': {transform: 'rotate(360deg)'},
+})
+
+const CircleButton = styled.button({
+  borderRadius: '30px',
+  padding: '0',
+  width: '40px',
+  height: '40px',
+  lineHeight: '1',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  background: colors.base,
+  color: colors.text,
+  border: `1px solid ${colors.gray10}`,
+  cursor: 'pointer',
+})
+
+const BookListUL = styled.ul({
+  listStyle: 'none',
+  padding: '0',
+  display: 'grid',
+  gridTemplateRows: 'repeat(auto-fill, minmax(100px, 1fr))',
+  gridGap: '1em',
 })
 
 const Spinner = styled(FaSpinner)({
@@ -39,27 +63,14 @@ const Button = styled.button(
   ({variant = 'primary'}) => buttonVariants[variant],
 )
 
-const Input = styled.input({
-  borderRadius: '3px',
-  border: `1px solid ${colors.gray10}`,
-  background: colors.gray,
+const inputStyles = {
+  border: '1px solid #f1f1f4',
+  background: '#f1f2f7',
   padding: '8px 12px',
-})
+}
 
-const CircleButton = styled.button({
-  borderRadius: '30px',
-  padding: '0',
-  width: '40px',
-  height: '40px',
-  lineHeight: '1',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  background: colors.base,
-  color: colors.text,
-  border: `1px solid ${colors.gray10}`,
-  cursor: 'pointer',
-})
+const Input = styled.input({borderRadius: '3px'}, inputStyles)
+const Textarea = styled.textarea(inputStyles)
 
 const Dialog = styled(ReachDialog)({
   maxWidth: '450px',
@@ -76,22 +87,6 @@ const Dialog = styled(ReachDialog)({
 const FormGroup = styled.div({
   display: 'flex',
   flexDirection: 'column',
-})
-
-const Link = styled(RouterLink)({
-  color: colors.indigo,
-  ':hover': {
-    color: colors.indigoDarken10,
-    textDecoration: 'underline',
-  },
-})
-
-const BookListUL = styled.ul({
-  listStyle: 'none',
-  padding: '0',
-  display: 'grid',
-  gridTemplateRows: 'repeat(auto-fill, minmax(100px, 1fr))',
-  gridGap: '1em',
 })
 
 function FullPageSpinner() {
@@ -111,6 +106,14 @@ function FullPageSpinner() {
   )
 }
 
+const Link = styled(RouterLink)({
+  color: colors.indigo,
+  ':hover': {
+    color: colors.indigoDarken10,
+    textDecoration: 'underline',
+  },
+})
+
 const errorMessageVariants = {
   stacked: {display: 'block'},
   inline: {display: 'inline-block'},
@@ -123,7 +126,7 @@ function ErrorMessage({error, variant = 'stacked', ...props}) {
       css={[{color: colors.danger}, errorMessageVariants[variant]]}
       {...props}
     >
-      <span>There was an error: {error.code ? error.code : null}</span>
+      <span>There was an error: </span>
       <pre
         css={[
           {whiteSpace: 'break-spaces', margin: '0', marginBottom: -5},
@@ -136,4 +139,36 @@ function ErrorMessage({error, variant = 'stacked', ...props}) {
   )
 }
 
-export {Button, Input, CircleButton, Dialog, FormGroup, Spinner, FullPageSpinner, Link, BookListUL, ErrorMessage}
+function FullPageErrorFallback({error}) {
+  return (
+    <div
+      role="alert"
+      css={{
+        color: colors.danger,
+        height: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    >
+      <p>Uh oh... There's a problem. Try refreshing the app.</p>
+      <pre>{error.message}</pre>
+    </div>
+  )
+}
+
+export {
+  FullPageErrorFallback,
+  ErrorMessage,
+  CircleButton,
+  BookListUL,
+  Spinner,
+  Button,
+  Input,
+  Textarea,
+  Dialog,
+  FormGroup,
+  FullPageSpinner,
+  Link,
+}

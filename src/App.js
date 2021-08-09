@@ -1,9 +1,10 @@
 /** @jsxImportSource @emotion/react */
 import { BrowserRouter as Router } from "react-router-dom";
 import { useEffect } from "react";
+import { queryCache, QueryClient, QueryClientProvider } from "react-query";
 
 // import { authFirebase } from "utils/firebase";
-import { client } from "utils/client";
+import { client } from "utils/api-client";
 import { useAsync } from "utils/hooks";
 import { Authenticated } from "screens/Authenticated";
 import { Unauthenticated } from "screens/Unauthenticated";
@@ -12,6 +13,7 @@ import * as colors from "styles/colors";
 import * as auth from "auth-provider";
 
 function App() {
+  const queryClient = new QueryClient();
   const {
     run,
     isLoading,
@@ -27,13 +29,14 @@ function App() {
   // .catch((error) => Promise.reject(error));
   const logout = () => {
     auth.logout();
+    queryCache.clear()
     setData(null);
   };
   async function getUser() {
     let user = null;
     const token = await auth.getToken();
     if (token) {
-      const data = await client('me', { token });
+      const data = await client("me", { token });
       user = data.user;
     }
     return user;
@@ -67,7 +70,9 @@ function App() {
     // 🐨 wrap the BrowserRouter around the AuthenticatedApp
     return user ? (
       <Router>
-        <Authenticated {...props} />
+        <QueryClientProvider client={queryClient}>
+          <Authenticated {...props} />
+        </QueryClientProvider>
       </Router>
     ) : (
       <Unauthenticated {...props} />

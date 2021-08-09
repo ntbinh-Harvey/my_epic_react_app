@@ -7,6 +7,8 @@ import * as colors from "styles/colors";
 import { BookScreen } from "screens/BookScreen";
 import { NotFoundScreen } from "screens/NotFoundScreen";
 import { DiscoverScreen } from "screens/DiscoverScreen";
+import { FinishedScreen } from "screens/FinishedScreen";
+import { ReadingListScreen } from "screens/ReadingListScreen";
 function Authenticated({ user, logout }) {
   return (
     <>
@@ -112,6 +114,12 @@ function Nav() {
         }}
       >
         <li>
+          <NavLink to="/list">Reading List</NavLink>
+        </li>
+        <li>
+          <NavLink to="/finished">Finished Books</NavLink>
+        </li>
+        <li>
           <NavLink to="/discover">Discover</NavLink>
         </li>
       </ul>
@@ -122,6 +130,8 @@ function Nav() {
 function AppRoutes({ user }) {
   return (
     <Routes>
+    <Route path="/list" element={<ReadingListScreen user={user} />} />
+      <Route path="/finished" element={<FinishedScreen user={user} />} />
       <Route path="/discover" element={<DiscoverScreen user={user} />} />
       <Route path="/book/:bookId" element={<BookScreen user={user} />} />
       <Route path="*" element={<NotFoundScreen />} />
