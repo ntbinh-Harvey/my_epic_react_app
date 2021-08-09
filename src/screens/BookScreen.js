@@ -1,11 +1,11 @@
 /** @jsxImportSource @emotion/react */
-
 import { useParams } from "react-router-dom";
-import { client } from "utils/client";
+import { useEffect } from "react";
+
 import * as mq from "styles/media-queries";
+import { client } from "utils/client";
 import { useAsync } from "utils/hooks";
 import bookPlaceholderSvg from "assets/book-placeholder.svg";
-import { useEffect } from "react";
 
 const loadingBook = {
   title: "Loading...",

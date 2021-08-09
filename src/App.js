@@ -1,13 +1,15 @@
 /** @jsxImportSource @emotion/react */
 import { BrowserRouter as Router } from "react-router-dom";
-import { FullPageSpinner } from "components/lib";
+import { useEffect } from "react";
+
+// import { authFirebase } from "utils/firebase";
+import { client } from "utils/client";
 import { useAsync } from "utils/hooks";
 import { Authenticated } from "screens/Authenticated";
 import { Unauthenticated } from "screens/Unauthenticated";
-import { useEffect } from "react";
-import * as colors from "./styles/colors";
+import { FullPageSpinner } from "components/lib";
+import * as colors from "styles/colors";
 import * as auth from "auth-provider";
-import { authFirebase } from "utils/firebase";
 
 function App() {
   const {
@@ -21,19 +23,24 @@ function App() {
     setData,
   } = useAsync();
   const login = (form) => auth.login(form).then((user) => setData(user));
-  const register = (form) =>
-    auth
-      .register(form)
-      .then((user) => {
-        setData(user);
-      })
-      .catch((error) => Promise.reject(error));
+  const register = (form) => auth.register(form).then((user) => setData(user));
+  // .catch((error) => Promise.reject(error));
   const logout = () => {
     auth.logout();
     setData(null);
   };
+  async function getUser() {
+    let user = null;
+    const token = await auth.getToken();
+    if (token) {
+      const data = await client('me', { token });
+      user = data.user;
+    }
+    return user;
+  }
   useEffect(() => {
-    authFirebase.onAuthStateChanged((user) => run(Promise.resolve(user)));
+    // authFirebase.onAuthStateChanged((user) => run(Promise.resolve(user)));
+    run(getUser());
   }, [run]);
   if (isLoading || isIdle) {
     return <FullPageSpinner />;

@@ -1,9 +1,9 @@
 /** @jsxImportSource @emotion/react */
-import { Logo } from "components/Logo";
-import { Button, Input, FormGroup } from "components/lib";
-import { Modal, ModalOpenButton, ModalContents } from "components/Modal";
 import { cloneElement } from "react";
-import {Spinner, ErrorMessage } from "components/lib"
+import { Logo } from "components/logo";
+import { Button, Input, FormGroup } from "components/lib";
+import { Modal, ModalOpenButton, ModalContents } from "components/modal";
+import { Spinner, ErrorMessage } from "components/lib";
 import { useAsync } from "utils/hooks";
 
 function LoginForm({ onSubmit, submitButton }) {

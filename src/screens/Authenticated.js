@@ -19,7 +19,7 @@ function Authenticated({ user, logout }) {
           right: "10px",
         }}
       >
-        {user.email}
+        {user.username}
         <Button
           variant="secondary"
           css={{ marginLeft: "10px" }}
