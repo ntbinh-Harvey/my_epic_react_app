@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { BrowserRouter as Router } from "react-router-dom";
 import { useEffect } from "react";
-import { queryCache } from "react-query";
+import { useQueryClient } from "react-query";
 // import { authFirebase } from "utils/firebase";
 import { client } from "utils/api-client";
 import { useAsync } from "utils/hooks";
@@ -12,6 +12,7 @@ import * as colors from "styles/colors";
 import * as auth from "auth-provider";
 
 function App() {
+  const queryClient = useQueryClient();
   const {
     run,
     isLoading,
@@ -27,7 +28,7 @@ function App() {
   // .catch((error) => Promise.reject(error));
   const logout = () => {
     auth.logout();
-    queryCache.clear();
+    queryClient.clear();
     setData(null);
   };
   async function getUser() {

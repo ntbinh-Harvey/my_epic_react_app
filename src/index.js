@@ -1,6 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
+
 import { loadDevTools } from "./dev-tools/load";
 import App from "./App";
 import "./bootstrap";
@@ -20,10 +22,12 @@ const queryClient = new QueryClient({
   },
 });
 loadDevTools(() =>
+  // eslint-disable-next-line react/no-render-return-value
   ReactDOM.render(
     <React.StrictMode>
       <QueryClientProvider client={queryClient}>
         <App />
+        <ReactQueryDevtools initialIsOpen={false} position="top-left" />
       </QueryClientProvider>
     </React.StrictMode>,
     document.getElementById("root")

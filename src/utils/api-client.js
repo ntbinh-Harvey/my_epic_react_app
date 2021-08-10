@@ -1,8 +1,9 @@
 // 🐨 get the queryCache from 'react-query'
 import {queryCache} from 'react-query'
 import * as auth from 'auth-provider'
+// eslint-disable-next-line no-undef
 const apiURL = process.env.REACT_APP_API_URL
-
+// const queryClient = useQueryClient();
 async function client(
   endpoint,
   {data, token, headers: customHeaders, ...customConfig} = {},
