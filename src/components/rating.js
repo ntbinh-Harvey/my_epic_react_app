@@ -1,54 +1,47 @@
 /** @jsxImportSource @emotion/react */
 
-import * as React from 'react'
-import { useMutation, useQueryClient } from 'react-query'
-// 🐨 you'll need useMutation and queryCache from react-query
-// 🐨 you'll also need the client from utils/api-client
-import {client} from 'utils/api-client'
-import {FaStar} from 'react-icons/fa'
-import * as colors from 'styles/colors'
+import * as React from "react";
+import { useUpdateListItem } from "utils/list-items";
+import { ErrorMessage } from "components/lib";
+import { FaStar } from "react-icons/fa";
+import * as colors from "styles/colors";
 
 const visuallyHiddenCSS = {
-  border: '0',
-  clip: 'rect(0 0 0 0)',
-  height: '1px',
-  margin: '-1px',
-  overflow: 'hidden',
-  padding: '0',
-  position: 'absolute',
-  width: '1px',
-}
+  border: "0",
+  clip: "rect(0 0 0 0)",
+  height: "1px",
+  margin: "-1px",
+  overflow: "hidden",
+  padding: "0",
+  position: "absolute",
+  width: "1px",
+};
 
-function Rating({listItem, user}) {
-  const [isTabbing, setIsTabbing] = React.useState(false)
-  const queryClient = useQueryClient()
+function Rating({ listItem, user }) {
+  const [isTabbing, setIsTabbing] = React.useState(false);
   // 🐨 call useMutation here and call the function "update"
   // the mutate function should call the list-items/:listItemId endpoint with a PUT
   //   and the updates as data. The mutate function will be called with the updates
   //   you can pass as data.
   // 💰 if you want to get the list-items cache updated after this query finishes
   // the use the `onSettled` config option to queryCache.invalidateQueries('list-items')
-  const { mutateAsync: update } = useMutation(
-    (updates) =>
-      client(`list-items/${updates.id}`, { method: 'PUT', data: updates, token: user.token }),
-    {onSettled: () => queryClient.invalidateQueries('list-items')}
-  );
+  const { mutate: update, error, isError } = useUpdateListItem(user);
 
   React.useEffect(() => {
     function handleKeyDown(event) {
-      if (event.key === 'Tab') {
-        setIsTabbing(true)
+      if (event.key === "Tab") {
+        setIsTabbing(true);
       }
     }
-    document.addEventListener('keydown', handleKeyDown, {once: true})
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [])
+    document.addEventListener("keydown", handleKeyDown, { once: true });
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
-  const rootClassName = `list-item-${listItem.id}`
+  const rootClassName = `list-item-${listItem.id}`;
 
-  const stars = Array.from({length: 5}).map((x, i) => {
-    const ratingId = `rating-${listItem.id}-${i}`
-    const ratingValue = i + 1
+  const stars = Array.from({ length: 5 }).map((x, i) => {
+    const ratingId = `rating-${listItem.id}-${i}`;
+    const ratingValue = i + 1;
     return (
       <React.Fragment key={i}>
         <input
@@ -58,13 +51,13 @@ function Rating({listItem, user}) {
           value={ratingValue}
           checked={ratingValue === listItem.rating}
           onChange={() => {
-            update({id: listItem.id, rating: ratingValue})
+            update({ id: listItem.id, rating: ratingValue });
           }}
           css={[
             visuallyHiddenCSS,
             {
-              [`.${rootClassName} &:checked ~ label`]: {color: colors.gray20},
-              [`.${rootClassName} &:checked + label`]: {color: 'orange'},
+              [`.${rootClassName} &:checked ~ label`]: { color: colors.gray20 },
+              [`.${rootClassName} &:checked + label`]: { color: "orange" },
               // !important is here because we're doing special non-css-in-js things
               // and so we have to deal with specificity and cascade. But, I promise
               // this is better than trying to make this work with JavaScript.
@@ -73,12 +66,12 @@ function Rating({listItem, user}) {
                 color: `${colors.gray20} !important`,
               },
               [`.${rootClassName} &:hover + label`]: {
-                color: 'orange !important',
+                color: "orange !important",
               },
               [`.${rootClassName} &:focus + label svg`]: {
                 outline: isTabbing
-                  ? ['1px solid orange', '-webkit-focus-ring-color auto 5px']
-                  : 'initial',
+                  ? ["1px solid orange", "-webkit-focus-ring-color auto 5px"]
+                  : "initial",
               },
             },
           ]}
@@ -86,34 +79,37 @@ function Rating({listItem, user}) {
         <label
           htmlFor={ratingId}
           css={{
-            cursor: 'pointer',
-            color: listItem.rating < 0 ? colors.gray20 : 'orange',
+            cursor: "pointer",
+            color: listItem.rating < 0 ? colors.gray20 : "orange",
             margin: 0,
           }}
         >
           <span css={visuallyHiddenCSS}>
-            {ratingValue} {ratingValue === 1 ? 'star' : 'stars'}
+            {ratingValue} {ratingValue === 1 ? "star" : "stars"}
           </span>
-          <FaStar css={{width: '16px', margin: '0 2px'}} />
+          <FaStar css={{ width: "16px", margin: "0 2px" }} />
         </label>
       </React.Fragment>
-    )
-  })
+    );
+  });
   return (
     <div
-      onClick={e => e.stopPropagation()}
+      onClick={(e) => e.stopPropagation()}
       className={rootClassName}
       css={{
-        display: 'inline-flex',
-        alignItems: 'center',
+        display: "inline-flex",
+        alignItems: "center",
         [`&.${rootClassName}:hover input + label`]: {
-          color: 'orange',
+          color: "orange",
         },
       }}
     >
-      <span css={{display: 'flex'}}>{stars}</span>
+      <span css={{ display: "flex" }}>{stars}</span>
+      {isError ? (
+        <ErrorMessage error={error} variant="inline" css={{ marginLeft: 6 }} />
+      ) : null}
     </div>
-  )
+  );
 }
 
-export {Rating}
+export { Rating };
