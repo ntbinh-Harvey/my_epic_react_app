@@ -13,71 +13,70 @@ import * as colors from "styles/colors";
 import { Textarea, ErrorMessage, Spinner } from "components/lib";
 import { Rating } from "components/rating";
 import { StatusButtons } from "components/status-buttons";
+import { Profiler } from "components/profiler";
 
 function BookScreen() {
   const { bookId } = useParams();
   const { book } = useBook(bookId);
-  const listItem = useListItem(book.id)
+  const listItem = useListItem(book.id);
   const { title, author, coverImageUrl, publisher, synopsis } = book;
 
   return (
-    <div>
-      <div
-        css={{
-          display: "grid",
-          gridTemplateColumns: "1fr 2fr",
-          gridGap: "2em",
-          marginBottom: "1em",
-          [mq.small]: {
-            display: "flex",
-            flexDirection: "column",
-          },
-        }}
-      >
-        <img
-          src={coverImageUrl}
-          alt={`${title} book cover`}
-          css={{ width: "100%", maxWidth: "14rem" }}
-        />
-        <div>
-          <div css={{ display: "flex", position: "relative" }}>
-            <div css={{ flex: 1, justifyContent: "space-between" }}>
-              <h1>{title}</h1>
-              <div>
-                <i>{author}</i>
-                <span css={{ marginRight: 6, marginLeft: 6 }}>|</span>
-                <i>{publisher}</i>
+    <Profiler id="Book Screen" metadata={{ bookId, listItemId: listItem?.id }}>
+      <div>
+        <div
+          css={{
+            display: "grid",
+            gridTemplateColumns: "1fr 2fr",
+            gridGap: "2em",
+            marginBottom: "1em",
+            [mq.small]: {
+              display: "flex",
+              flexDirection: "column",
+            },
+          }}
+        >
+          <img
+            src={coverImageUrl}
+            alt={`${title} book cover`}
+            css={{ width: "100%", maxWidth: "14rem" }}
+          />
+          <div>
+            <div css={{ display: "flex", position: "relative" }}>
+              <div css={{ flex: 1, justifyContent: "space-between" }}>
+                <h1>{title}</h1>
+                <div>
+                  <i>{author}</i>
+                  <span css={{ marginRight: 6, marginLeft: 6 }}>|</span>
+                  <i>{publisher}</i>
+                </div>
+              </div>
+              <div
+                css={{
+                  right: 0,
+                  color: colors.gray80,
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-around",
+                  minHeight: 100,
+                }}
+              >
+                {book.loadingBook ? null : <StatusButtons book={book} />}
               </div>
             </div>
-            <div
-              css={{
-                right: 0,
-                color: colors.gray80,
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-around",
-                minHeight: 100,
-              }}
-            >
-              {book.loadingBook ? null : (
-                <StatusButtons book={book} />
-              )}
+            <div css={{ marginTop: 10, height: 46 }}>
+              {listItem?.finishDate ? <Rating listItem={listItem} /> : null}
+              {listItem ? <ListItemTimeframe listItem={listItem} /> : null}
             </div>
+            <br />
+            <p>{synopsis}</p>
           </div>
-          <div css={{ marginTop: 10, height: 46 }}>
-            {listItem?.finishDate ? (
-              <Rating listItem={listItem} />
-            ) : null}
-            {listItem ? <ListItemTimeframe listItem={listItem} /> : null}
-          </div>
-          <br />
-          <p>{synopsis}</p>
         </div>
+        {!book.loadingBook && listItem ? (
+          <NotesTextarea listItem={listItem} />
+        ) : null}
       </div>
-      {!book.loadingBook && listItem ? (
-        <NotesTextarea listItem={listItem} />
-      ) : null}
-    </div>
+    </Profiler>
   );
 }
 
@@ -100,7 +99,7 @@ function ListItemTimeframe({ listItem }) {
 }
 
 function NotesTextarea({ listItem }) {
-  const { mutate, error, isError, isLoading } = useUpdateListItem()
+  const { mutate, error, isError, isLoading } = useUpdateListItem();
   const debouncedMutate = useMemo(
     () => debounceFn(mutate, { wait: 300 }),
     [mutate]
@@ -125,7 +124,13 @@ function NotesTextarea({ listItem }) {
         >
           Notes
         </label>
-        {isError ? <ErrorMessage error={error} variant="inline" css={{marginLeft: 6}}/> : null}
+        {isError ? (
+          <ErrorMessage
+            error={error}
+            variant="inline"
+            css={{ marginLeft: 6 }}
+          />
+        ) : null}
         {isLoading ? <Spinner /> : null}
       </div>
       <Textarea

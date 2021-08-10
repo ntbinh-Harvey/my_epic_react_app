@@ -1,4 +1,5 @@
 import { useRef, useLayoutEffect, useCallback, useReducer } from "react";
+import { wrap } from "components/profiler";
 
 function useSafeDispatch(dispatch) {
   const mounted = useRef(false);
@@ -52,14 +53,14 @@ function useAsync(initialState) {
       }
       safeSetState({ status: "pending" });
       return promise.then(
-        (data) => {
+        wrap((data) => {
           setData(data);
           return data;
-        },
-        (error) => {
+        }),
+        wrap((error) => {
           setError(error);
           return Promise.reject(error);
-        }
+        })
       );
     },
     [safeSetState, setData, setError]

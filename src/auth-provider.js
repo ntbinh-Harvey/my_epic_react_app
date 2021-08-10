@@ -1,4 +1,3 @@
-// import { authFirebase } from "utils/firebase";
 const localStorageKey = "__auth_provider_token__";
 
 async function getToken() {
@@ -6,30 +5,21 @@ async function getToken() {
 }
 
 async function handleUserResponse({ user }) {
-  // user.token = await user.getIdToken();
   window.localStorage.setItem(localStorageKey, user.token);
   return user;
 }
 
 function login({ username, password }) {
   return client("login", { username, password }).then(handleUserResponse);
-  // return authFirebase
-  //   .signInWithEmailAndPassword(username, password)
-  //   .then(handleUserResponse)
-  //   .catch(error => Promise.reject(error));
 }
 
 function register({ username, password }) {
   return client("register", { username, password }).then(handleUserResponse);
-  // return authFirebase
-  //   .createUserWithEmailAndPassword(username, password)
-  //   .then(handleUserResponse)
-  //   .catch(error => Promise.reject(error));
 }
 async function logout() {
-  // authFirebase.signOut()
   window.localStorage.removeItem(localStorageKey);
 }
+// eslint-disable-next-line no-undef
 const authURL = process.env.REACT_APP_AUTH_URL;
 
 async function client(endpoint, data) {
@@ -42,8 +32,6 @@ async function client(endpoint, data) {
   return window
     .fetch(`${authURL}/${endpoint}`, config)
     .then(async (response) => {
-      console.log("response", response);
-
       const data = await response.json();
       if (response.ok) {
         return data;

@@ -8,6 +8,7 @@ import {
 } from "react-icons/fa";
 import Tooltip from "@reach/tooltip";
 import { useMutation, useQueryClient } from "react-query";
+import {trace} from 'components/profiler'
 import {useAuth} from 'context/auth-context'
 import { useListItem, useUpdateListItem } from "utils/list-items";
 import { client } from "utils/api-client";
@@ -23,7 +24,7 @@ function TooltipButton({ label, highlight, onClick, icon, ...rest }) {
     if (isError) {
       reset();
     } else {
-      run(onClick());
+      trace(`Click ${label}`, performance.now(), () => run(onClick()))
     }
   }
 

@@ -160,4 +160,4 @@ function AppRoutes() {
   );
 }
 
-export { Authenticated };
+export default Authenticated;

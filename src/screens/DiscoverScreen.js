@@ -3,17 +3,18 @@
 import { useState } from "react";
 import Tooltip from "@reach/tooltip";
 import { FaSearch, FaTimes } from "react-icons/fa";
-import {useBookSearch} from 'utils/books'
+import { useBookSearch } from "utils/books";
 import * as colors from "styles/colors";
-import {useEffect} from "react"
+import { useEffect } from "react";
 import { useRefetchBookSearchQuery } from "utils/books";
 import { BookRow } from "components/book-row";
 import { BookListUL, Spinner, Input } from "components/lib";
+import {Profiler} from "components/profiler"
 
 function DiscoverScreen() {
   const [query, setQuery] = useState("");
   const [queried, setQueried] = useState(false);
-  const refetchBookSearchQuery = useRefetchBookSearchQuery()
+  const refetchBookSearchQuery = useRefetchBookSearchQuery();
   const { books, error, isLoading, isError, isSuccess } = useBookSearch(query);
 
   function handleSearchSubmit(event) {
@@ -23,8 +24,8 @@ function DiscoverScreen() {
   }
 
   useEffect(() => {
-    return () => refetchBookSearchQuery()
-  }, [refetchBookSearchQuery])
+    return () => refetchBookSearchQuery();
+  }, [refetchBookSearchQuery]);
   return (
     <div>
       <form onSubmit={handleSearchSubmit}>
@@ -83,13 +84,18 @@ function DiscoverScreen() {
       </div>
       {isSuccess ? (
         books.length ? (
-          <BookListUL css={{ marginTop: 20 }}>
-            {books.map((book) => (
-              <li key={book.id} aria-label={book.title}>
-                <BookRow key={book.id} book={book} />
-              </li>
-            ))}
-          </BookListUL>
+          <Profiler
+            id="Discover Screen Book List"
+            metadata={{ query, bookCount: books.length }}
+          >
+            <BookListUL css={{ marginTop: 20 }}>
+              {books.map((book) => (
+                <li key={book.id} aria-label={book.title}>
+                  <BookRow key={book.id} book={book} />
+                </li>
+              ))}
+            </BookListUL>
+          </Profiler>
         ) : (
           <p>No books found. Try another search.</p>
         )

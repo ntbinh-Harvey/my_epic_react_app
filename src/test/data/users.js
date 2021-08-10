@@ -68,6 +68,7 @@ async function read(id) {
 }
 
 function sanitizeUser(user) {
+  // eslint-disable-next-line no-unused-vars
   const {passwordHash, ...rest} = user
   return rest
 }

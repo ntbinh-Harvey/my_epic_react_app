@@ -9,8 +9,9 @@ import * as colors from "styles/colors";
 import * as auth from "auth-provider";
 
 const AuthContext = React.createContext();
+AuthContext.displayName = 'AuthContext'
 
-function AuthProvider(props) {
+function AuthProvider({children, ...props}) {
   const queryClient = useQueryClient();
   const {
     run,
@@ -24,24 +25,23 @@ function AuthProvider(props) {
   } = useAsync();
   const login = (form) => auth.login(form).then((user) => setData(user));
   const register = (form) => auth.register(form).then((user) => setData(user));
-  // .catch((error) => Promise.reject(error));
   const logout = () => {
     auth.logout();
     queryClient.clear();
     setData(null);
   };
-  const getUser = React.useCallback(async () => {
+  async function getUser() {
     let user = null;
     const token = await auth.getToken();
     if (token) {
-      const data = await client("me", { queryClient, token });
+      const data = await client('me', {token})
       user = data.user;
     }
     return user;
-  }, [queryClient]);
+  }
   React.useEffect(() => {
     run(getUser());
-  }, [getUser, run]);
+  }, [run]);
   if (isLoading || isIdle) {
     return <FullPageSpinner />;
   }
@@ -65,7 +65,7 @@ function AuthProvider(props) {
   if (isSuccess) {
     const value = { user, login, register, logout };
     return (
-      <AuthContext.Provider value={value} {...props}>{props.children}</AuthContext.Provider>
+      <AuthContext.Provider value={value} {...props}>{children}</AuthContext.Provider>
     );
   }
 }

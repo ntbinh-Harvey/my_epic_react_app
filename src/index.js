@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { AuthProviders } from "context";
+import {Profiler} from "components/profiler"
 import { loadDevTools } from "./dev-tools/load";
 import App from "./App";
 import "./bootstrap";
@@ -9,9 +10,11 @@ import reportWebVitals from "./reportWebVitals";
 loadDevTools(() =>
   // eslint-disable-next-line react/no-render-return-value
   ReactDOM.render(
-    <AuthProviders>
-      <App />
-    </AuthProviders>,
+    <Profiler id="App root" phases={['mount']}>
+      <AuthProviders>
+        <App />
+      </AuthProviders>
+    </Profiler>,
     document.getElementById("root")
   )
 );
