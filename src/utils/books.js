@@ -1,4 +1,4 @@
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import { client } from "utils/api-client";
 import bookPlaceholderSvg from "assets/book-placeholder.svg";
 
@@ -15,14 +15,21 @@ const loadingBooks = Array.from({ length: 10 }, (v, index) => ({
   id: `loading-book-${index}`,
   ...loadingBook,
 }));
+const getBookSearchConfig = (queryClient, query, user) => ({
+  queryKey: ["bookSearch", { query }],
+  queryFn: () =>
+    client(`books?query=${encodeURIComponent(query)}`, {
+      token: user.token,
+    }).then((data) => data.books),
+  onSuccess: (books) => {
+    for (const book of books) {
+      setQueryDataForBook(queryClient, book);
+    }
+  },
+});
 function useBookSearch(query, user) {
-  const results = useQuery({
-    queryKey: ["bookSearch", { query }],
-    queryFn: () =>
-      client(`books?query=${encodeURIComponent(query)}`, {
-        token: user.token,
-      }).then((data) => data.books),
-  });
+  const queryClient = useQueryClient();
+  const results = useQuery(getBookSearchConfig(queryClient, query, user));
 
   return { ...results, books: results.data ?? loadingBooks };
 }
@@ -38,4 +45,12 @@ function useBook(bookId, user) {
   return { ...results, book: results.data ?? loadingBook };
 }
 
-export { useBookSearch, useBook };
+function refetchBookSearchQuery(queryClient, user) {
+  queryClient.removeQueries("bookSearch");
+  queryClient.prefetchQuery(getBookSearchConfig(queryClient, "", user));
+}
+
+function setQueryDataForBook(queryClient, book) {
+  queryClient.setQueryData(["book", { bookId: book.id }], book);
+}
+export { useBookSearch, useBook, refetchBookSearchQuery, setQueryDataForBook };

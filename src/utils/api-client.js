@@ -1,12 +1,11 @@
 // 🐨 get the queryCache from 'react-query'
-import {queryCache} from 'react-query'
 import * as auth from 'auth-provider'
 // eslint-disable-next-line no-undef
 const apiURL = process.env.REACT_APP_API_URL
 // const queryClient = useQueryClient();
 async function client(
   endpoint,
-  {data, token, headers: customHeaders, ...customConfig} = {},
+  {data, queryClient, token, headers: customHeaders, ...customConfig} = {},
 ) {
   const config = {
     method: data ? 'POST' : 'GET',
@@ -23,7 +22,7 @@ async function client(
     if (response.status === 401) {
       // 🐨 call queryCache.clear() to clear all user data from react-query
       await auth.logout()
-      queryCache.clear()
+      queryClient.clear()
       // refresh the page for them
       window.location.assign(window.location)
       return Promise.reject({message: 'Please re-authenticate.'})

@@ -10,7 +10,7 @@ import { useBook } from "utils/books";
 import { formatDate } from "utils/misc";
 import * as mq from "styles/media-queries";
 import * as colors from "styles/colors";
-import { Textarea, ErrorMessage } from "components/lib";
+import { Textarea, ErrorMessage, Spinner } from "components/lib";
 import { Rating } from "components/rating";
 import { StatusButtons } from "components/status-buttons";
 
@@ -100,7 +100,7 @@ function ListItemTimeframe({ listItem }) {
 }
 
 function NotesTextarea({ listItem, user }) {
-  const { mutate, error, isError } = useUpdateListItem(user)
+  const { mutate, error, isError, isLoading } = useUpdateListItem(user)
   const debouncedMutate = useMemo(
     () => debounceFn(mutate, { wait: 300 }),
     [mutate]
@@ -126,6 +126,7 @@ function NotesTextarea({ listItem, user }) {
           Notes
         </label>
         {isError ? <ErrorMessage error={error} variant="inline" css={{marginLeft: 6}}/> : null}
+        {isLoading ? <Spinner /> : null}
       </div>
       <Textarea
         id="notes"

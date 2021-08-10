@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { BrowserRouter as Router } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { useQueryClient } from "react-query";
 // import { authFirebase } from "utils/firebase";
 import { client } from "utils/api-client";
@@ -31,19 +31,18 @@ function App() {
     queryClient.clear();
     setData(null);
   };
-  async function getUser() {
+  const getUser = useCallback(async () => {
     let user = null;
     const token = await auth.getToken();
     if (token) {
-      const data = await client("me", { token });
+      const data = await client("me", {queryClient, token });
       user = data.user;
     }
     return user;
-  }
+  }, [queryClient]);
   useEffect(() => {
-    // authFirebase.onAuthStateChanged((user) => run(Promise.resolve(user)));
     run(getUser());
-  }, [run]);
+  }, [getUser, run]);
   if (isLoading || isIdle) {
     return <FullPageSpinner />;
   }

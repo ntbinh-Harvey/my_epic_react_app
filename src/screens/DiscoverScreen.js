@@ -3,15 +3,19 @@
 import { useState } from "react";
 import Tooltip from "@reach/tooltip";
 import { FaSearch, FaTimes } from "react-icons/fa";
+import {useQueryClient} from "react-query"
 // 🐨 you'll need useQuery from 'react-query'
 import {useBookSearch} from 'utils/books'
 import * as colors from "styles/colors";
+import {useEffect} from "react"
+import { refetchBookSearchQuery } from "utils/books";
 import { BookRow } from "components/book-row";
 import { BookListUL, Spinner, Input } from "components/lib";
 
 function DiscoverScreen({ user }) {
   const [query, setQuery] = useState("");
   const [queried, setQueried] = useState(false);
+  const queryClient = useQueryClient()
   // 🐨 replace this useAsync call with a useQuery call to handle the book search
   // the queryKey should be ['bookSearch', {query}]
   // the queryFn should be the same thing we have in the run function below
@@ -24,6 +28,9 @@ function DiscoverScreen({ user }) {
     setQuery(event.target.elements.search.value);
   }
 
+  useEffect(() => {
+    return () => refetchBookSearchQuery(queryClient, user)
+  }, [user, queryClient])
   return (
     <div>
       <form onSubmit={handleSearchSubmit}>
