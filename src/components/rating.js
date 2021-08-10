@@ -17,7 +17,7 @@ const visuallyHiddenCSS = {
   width: "1px",
 };
 
-function Rating({ listItem, user }) {
+function Rating({ listItem }) {
   const [isTabbing, setIsTabbing] = React.useState(false);
   // 🐨 call useMutation here and call the function "update"
   // the mutate function should call the list-items/:listItemId endpoint with a PUT
@@ -25,7 +25,7 @@ function Rating({ listItem, user }) {
   //   you can pass as data.
   // 💰 if you want to get the list-items cache updated after this query finishes
   // the use the `onSettled` config option to queryCache.invalidateQueries('list-items')
-  const { mutate: update, error, isError } = useUpdateListItem(user);
+  const { mutate: update, error, isError } = useUpdateListItem();
 
   React.useEffect(() => {
     function handleKeyDown(event) {

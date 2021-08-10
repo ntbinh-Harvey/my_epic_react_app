@@ -3,24 +3,18 @@
 import { useState } from "react";
 import Tooltip from "@reach/tooltip";
 import { FaSearch, FaTimes } from "react-icons/fa";
-import {useQueryClient} from "react-query"
-// 🐨 you'll need useQuery from 'react-query'
 import {useBookSearch} from 'utils/books'
 import * as colors from "styles/colors";
 import {useEffect} from "react"
-import { refetchBookSearchQuery } from "utils/books";
+import { useRefetchBookSearchQuery } from "utils/books";
 import { BookRow } from "components/book-row";
 import { BookListUL, Spinner, Input } from "components/lib";
 
-function DiscoverScreen({ user }) {
+function DiscoverScreen() {
   const [query, setQuery] = useState("");
   const [queried, setQueried] = useState(false);
-  const queryClient = useQueryClient()
-  // 🐨 replace this useAsync call with a useQuery call to handle the book search
-  // the queryKey should be ['bookSearch', {query}]
-  // the queryFn should be the same thing we have in the run function below
-  // you'll get back the same stuff you get from useAsync, (except the run function)
-  const { books, error, isLoading, isError, isSuccess } = useBookSearch(query, user);
+  const refetchBookSearchQuery = useRefetchBookSearchQuery()
+  const { books, error, isLoading, isError, isSuccess } = useBookSearch(query);
 
   function handleSearchSubmit(event) {
     event.preventDefault();
@@ -29,8 +23,8 @@ function DiscoverScreen({ user }) {
   }
 
   useEffect(() => {
-    return () => refetchBookSearchQuery(queryClient, user)
-  }, [user, queryClient])
+    return () => refetchBookSearchQuery()
+  }, [refetchBookSearchQuery])
   return (
     <div>
       <form onSubmit={handleSearchSubmit}>
@@ -92,7 +86,7 @@ function DiscoverScreen({ user }) {
           <BookListUL css={{ marginTop: 20 }}>
             {books.map((book) => (
               <li key={book.id} aria-label={book.title}>
-                <BookRow user={user} key={book.id} book={book} />
+                <BookRow key={book.id} book={book} />
               </li>
             ))}
           </BookListUL>

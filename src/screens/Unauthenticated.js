@@ -1,5 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { cloneElement } from "react";
+import {useAuth} from 'context/auth-context'
 import { Logo } from "components/logo";
 import { Button, Input, FormGroup } from "components/lib";
 import { Modal, ModalOpenButton, ModalContents } from "components/modal";
@@ -56,7 +57,8 @@ function LoginForm({ onSubmit, submitButton }) {
   );
 }
 
-function Unauthenticated({ login, register }) {
+function Unauthenticated() {
+  const {login, register} = useAuth()
   return (
     <div
       css={{

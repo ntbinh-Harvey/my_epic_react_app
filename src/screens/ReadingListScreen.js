@@ -1,10 +1,9 @@
 import {Link} from 'components/lib'
 import {ListItemList} from 'components/list-item-list'
 
-function ReadingListScreen({user}) {
+function ReadingListScreen() {
   return (
     <ListItemList
-      user={user}
       filterListItems={li => !li.finishDate}
       noListItems={
         <p>

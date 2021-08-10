@@ -1,6 +1,7 @@
 import { useQuery, useQueryClient } from "react-query";
-import { client } from "utils/api-client";
+import { useClient } from "context/auth-context";
 import bookPlaceholderSvg from "assets/book-placeholder.svg";
+import React from "react";
 
 const loadingBook = {
   title: "Loading...",
@@ -15,42 +16,51 @@ const loadingBooks = Array.from({ length: 10 }, (v, index) => ({
   id: `loading-book-${index}`,
   ...loadingBook,
 }));
-const getBookSearchConfig = (queryClient, query, user) => ({
+const getBookSearchConfig = (queryClient, query, client) => ({
   queryKey: ["bookSearch", { query }],
   queryFn: () =>
-    client(`books?query=${encodeURIComponent(query)}`, {
-      token: user.token,
-    }).then((data) => data.books),
+    client(`books?query=${encodeURIComponent(query)}`).then(
+      (data) => data.books
+    ),
   onSuccess: (books) => {
     for (const book of books) {
       setQueryDataForBook(queryClient, book);
     }
   },
 });
-function useBookSearch(query, user) {
+function useBookSearch(query) {
+  const client = useClient();
   const queryClient = useQueryClient();
-  const results = useQuery(getBookSearchConfig(queryClient, query, user));
+  const results = useQuery(getBookSearchConfig(queryClient, query, client));
 
   return { ...results, books: results.data ?? loadingBooks };
 }
 
-function useBook(bookId, user) {
+function useBook(bookId) {
+  const client = useClient();
   const results = useQuery({
     queryKey: ["book", { bookId }],
-    queryFn: () =>
-      client(`books/${bookId}`, { token: user.token }).then(
-        (data) => data.book
-      ),
+    queryFn: () => client(`books/${bookId}`).then((data) => data.book),
   });
   return { ...results, book: results.data ?? loadingBook };
 }
 
-function refetchBookSearchQuery(queryClient, user) {
-  queryClient.removeQueries("bookSearch");
-  queryClient.prefetchQuery(getBookSearchConfig(queryClient, "", user));
+function useRefetchBookSearchQuery() {
+  const client = useClient();
+  const queryClient = useQueryClient();
+  return React.useCallback(async function refetchBookSearchQuery() {
+    queryClient.removeQueries("bookSearch");
+    queryClient.prefetchQuery(getBookSearchConfig("", client));
+  }, [client, queryClient]);
 }
 
 function setQueryDataForBook(queryClient, book) {
   queryClient.setQueryData(["book", { bookId: book.id }], book);
 }
-export { useBookSearch, useBook, refetchBookSearchQuery, setQueryDataForBook };
+
+export {
+  useBookSearch,
+  useBook,
+  useRefetchBookSearchQuery,
+  setQueryDataForBook,
+};

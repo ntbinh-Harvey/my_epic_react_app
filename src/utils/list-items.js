@@ -1,8 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from "react-query";
+import { useAuth } from "context/auth-context";
 import { setQueryDataForBook } from "./books";
 import { client } from "utils/api-client";
 
-function useListItems(user) {
+function useListItems() {
+  const { user } = useAuth();
   const queryClient = useQueryClient();
   const { data: listItems } = useQuery({
     queryKey: "list-items",
@@ -19,12 +21,13 @@ function useListItems(user) {
   return listItems ?? [];
 }
 
-function useListItem(user, bookId) {
-  const listItems = useListItems(user);
+function useListItem(bookId) {
+  const listItems = useListItems();
   return listItems.find((item) => item.bookId === bookId) ?? null;
 }
 
-function useUpdateListItem(user, ...options) {
+function useUpdateListItem(...options) {
+  const { user } = useAuth();
   const queryClient = useQueryClient();
   return useMutation(
     (updates) =>
@@ -53,7 +56,8 @@ function useUpdateListItem(user, ...options) {
   );
 }
 
-function useRemoveListItem(user, ...options) {
+function useRemoveListItem(...options) {
+  const { user } = useAuth();
   const queryClient = useQueryClient();
   return useMutation(
     ({ id }) =>
@@ -76,7 +80,8 @@ function useRemoveListItem(user, ...options) {
   );
 }
 
-function useCreateListItem(user, ...options) {
+function useCreateListItem(...options) {
+  const { user } = useAuth();
   const queryClient = useQueryClient();
   return useMutation(
     ({ bookId }) =>

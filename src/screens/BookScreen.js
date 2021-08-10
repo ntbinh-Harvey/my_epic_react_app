@@ -14,10 +14,10 @@ import { Textarea, ErrorMessage, Spinner } from "components/lib";
 import { Rating } from "components/rating";
 import { StatusButtons } from "components/status-buttons";
 
-function BookScreen({ user }) {
+function BookScreen() {
   const { bookId } = useParams();
-  const { book } = useBook(bookId, user);
-  const listItem = useListItem(user, book.id)
+  const { book } = useBook(bookId);
+  const listItem = useListItem(book.id)
   const { title, author, coverImageUrl, publisher, synopsis } = book;
 
   return (
@@ -60,13 +60,13 @@ function BookScreen({ user }) {
               }}
             >
               {book.loadingBook ? null : (
-                <StatusButtons user={user} book={book} />
+                <StatusButtons book={book} />
               )}
             </div>
           </div>
           <div css={{ marginTop: 10, height: 46 }}>
             {listItem?.finishDate ? (
-              <Rating user={user} listItem={listItem} />
+              <Rating listItem={listItem} />
             ) : null}
             {listItem ? <ListItemTimeframe listItem={listItem} /> : null}
           </div>
@@ -75,7 +75,7 @@ function BookScreen({ user }) {
         </div>
       </div>
       {!book.loadingBook && listItem ? (
-        <NotesTextarea user={user} listItem={listItem} />
+        <NotesTextarea listItem={listItem} />
       ) : null}
     </div>
   );
@@ -99,8 +99,8 @@ function ListItemTimeframe({ listItem }) {
   );
 }
 
-function NotesTextarea({ listItem, user }) {
-  const { mutate, error, isError, isLoading } = useUpdateListItem(user)
+function NotesTextarea({ listItem }) {
+  const { mutate, error, isError, isLoading } = useUpdateListItem()
   const debouncedMutate = useMemo(
     () => debounceFn(mutate, { wait: 300 }),
     [mutate]

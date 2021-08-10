@@ -1,5 +1,4 @@
 /** @jsxImportSource @emotion/react */
-
 import {
   FaCheckCircle,
   FaPlusCircle,
@@ -9,6 +8,7 @@ import {
 } from "react-icons/fa";
 import Tooltip from "@reach/tooltip";
 import { useMutation, useQueryClient } from "react-query";
+import {useAuth} from 'context/auth-context'
 import { useListItem, useUpdateListItem } from "utils/list-items";
 import { client } from "utils/api-client";
 import { useAsync } from "utils/hooks";
@@ -51,11 +51,12 @@ function TooltipButton({ label, highlight, onClick, icon, ...rest }) {
   );
 }
 
-function StatusButtons({ user, book }) {
+function StatusButtons({ book }) {
+  const {user} = useAuth()
   const queryClient = useQueryClient();
-  const listItem = useListItem(user, book.id);
+  const listItem = useListItem(book.id);
 
-  const { mutateAsync: update } = useUpdateListItem(user);
+  const { mutateAsync: update } = useUpdateListItem();
   const { mutateAsync: remove } = useMutation(
     ({ id }) =>
       client(`list-items/${id}`, { method: "DELETE", token: user.token }),
