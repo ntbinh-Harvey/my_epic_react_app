@@ -1,15 +1,16 @@
-import React from "react";
-import { client } from "utils/api-client";
-let queue = [];
+/* eslint-disable camelcase */
+import React from 'react';
+import { client } from 'utils/api-client';
 
-setInterval(sendProfile, 5000);
+let queue = [];
 
 function sendProfile() {
   if (!queue.length) return Promise.resolve({ success: true });
   const dataSentToServer = [...queue];
   queue = [];
-  return client("profile", { data: dataSentToServer });
+  return client('profile', { data: dataSentToServer });
 }
+setInterval(sendProfile, 5000);
 function Profiler({ phases, metadata, ...props }) {
   function reportProfile(
     id,
@@ -18,7 +19,7 @@ function Profiler({ phases, metadata, ...props }) {
     baseDuration,
     startTime,
     commitTime,
-    interactions
+    interactions,
   ) {
     if (!phases || phases.includes(phase)) {
       queue.push({
@@ -37,4 +38,5 @@ function Profiler({ phases, metadata, ...props }) {
 }
 
 export { Profiler };
-export {unstable_trace as trace, unstable_wrap as wrap} from 'scheduler/tracing'
+// eslint-disable-next-line import/no-extraneous-dependencies
+export { unstable_trace as trace, unstable_wrap as wrap } from 'scheduler/tracing';

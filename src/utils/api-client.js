@@ -1,11 +1,11 @@
-// 🐨 get the queryCache from 'react-query'
-import * as auth from 'auth-provider'
+import * as auth from 'auth-provider';
 // eslint-disable-next-line no-undef
-const apiURL = process.env.REACT_APP_API_URL
-// const queryClient = useQueryClient();
+const apiURL = process.env.REACT_APP_API_URL;
 async function client(
   endpoint,
-  {data, queryClient, token, headers: customHeaders, ...customConfig} = {},
+  {
+    data, queryClient, token, headers: customHeaders, ...customConfig
+  } = {},
 ) {
   const config = {
     method: data ? 'POST' : 'GET',
@@ -16,24 +16,23 @@ async function client(
       ...customHeaders,
     },
     ...customConfig,
-  }
+  };
 
-  return window.fetch(`${apiURL}/${endpoint}`, config).then(async response => {
+  return window.fetch(`${apiURL}/${endpoint}`, config).then(async (response) => {
     if (response.status === 401) {
-      // 🐨 call queryCache.clear() to clear all user data from react-query
-      await auth.logout()
-      queryClient.clear()
+      await auth.logout();
+      queryClient.clear();
       // refresh the page for them
-      window.location.assign(window.location)
-      return Promise.reject({message: 'Please re-authenticate.'})
+      window.location.assign(window.location);
+      // eslint-disable-next-line prefer-promise-reject-errors
+      return Promise.reject({ message: 'Please re-authenticate.' });
     }
-    const data = await response.json()
+    const dataReturn = await response.json();
     if (response.ok) {
-      return data
-    } else {
-      return Promise.reject(data)
+      return dataReturn;
     }
-  })
+    return Promise.reject(dataReturn);
+  });
 }
 
-export {client}
+export default client;

@@ -1,21 +1,22 @@
 /** @jsxImportSource @emotion/react */
 
-import { useState } from "react";
-import Tooltip from "@reach/tooltip";
-import { FaSearch, FaTimes } from "react-icons/fa";
-import { useBookSearch } from "utils/books";
-import * as colors from "styles/colors";
-import { useEffect } from "react";
-import { useRefetchBookSearchQuery } from "utils/books";
-import { BookRow } from "components/book-row";
-import { BookListUL, Spinner, Input } from "components/lib";
-import {Profiler} from "components/profiler"
+import { useState, useEffect } from 'react';
+import Tooltip from '@reach/tooltip';
+import { FaSearch, FaTimes } from 'react-icons/fa';
+import { useBookSearch, useRefetchBookSearchQuery } from 'utils/books';
+import * as colors from 'styles/colors';
+
+import { BookRow } from 'components/book-row';
+import { BookListUL, Spinner, Input } from 'components/lib';
+import { Profiler } from 'components/profiler';
 
 function DiscoverScreen() {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
   const [queried, setQueried] = useState(false);
   const refetchBookSearchQuery = useRefetchBookSearchQuery();
-  const { books, error, isLoading, isError, isSuccess } = useBookSearch(query);
+  const {
+    books, error, isLoading, isError, isSuccess,
+  } = useBookSearch(query);
 
   function handleSearchSubmit(event) {
     event.preventDefault();
@@ -23,26 +24,24 @@ function DiscoverScreen() {
     setQuery(event.target.elements.search.value);
   }
 
-  useEffect(() => {
-    return () => refetchBookSearchQuery();
-  }, [refetchBookSearchQuery]);
+  useEffect(() => () => refetchBookSearchQuery(), [refetchBookSearchQuery]);
   return (
     <div>
       <form onSubmit={handleSearchSubmit}>
         <Input
           placeholder="Search books..."
           id="search"
-          css={{ width: "100%" }}
+          css={{ width: '100%' }}
         />
         <Tooltip label="Search Books">
           <label htmlFor="search">
             <button
               type="submit"
               css={{
-                border: "0",
-                position: "relative",
-                marginLeft: "-35px",
-                background: "transparent",
+                border: '0',
+                position: 'relative',
+                marginLeft: '-35px',
+                background: 'transparent',
               }}
             >
               {isLoading ? (
@@ -65,11 +64,11 @@ function DiscoverScreen() {
       ) : null}
       <div>
         {queried ? null : (
-          <div css={{ marginTop: 20, fontSize: "1.2em", textAlign: "center" }}>
+          <div css={{ marginTop: 20, fontSize: '1.2em', textAlign: 'center' }}>
             <p>Welcome to the discover page.</p>
             <p>Here, let me load a few books for you...</p>
             {isLoading ? (
-              <div css={{ width: "100%", margin: "auto" }}>
+              <div css={{ width: '100%', margin: 'auto' }}>
                 <Spinner />
               </div>
             ) : isSuccess && books.length ? (
@@ -104,4 +103,4 @@ function DiscoverScreen() {
   );
 }
 
-export { DiscoverScreen };
+export default DiscoverScreen;

@@ -5,40 +5,44 @@ import {
   FaMinusCircle,
   FaBook,
   FaTimesCircle,
-} from "react-icons/fa";
-import Tooltip from "@reach/tooltip";
-import { useMutation, useQueryClient } from "react-query";
-import {trace} from 'components/profiler'
-import {useAuth} from 'context/auth-context'
-import { useListItem, useUpdateListItem } from "utils/list-items";
-import { client } from "utils/api-client";
-import { useAsync } from "utils/hooks";
-import * as colors from "styles/colors";
-import { CircleButton, Spinner } from "./lib";
+} from 'react-icons/fa';
+import Tooltip from '@reach/tooltip';
+import { trace } from 'components/profiler';
+import {
+  useListItem, useUpdateListItem, useRemoveListItem, useCreateListItem,
+} from 'utils/list-items';
+import { useAsync } from 'utils/hooks';
+import * as colors from 'styles/colors';
+import { CircleButton, Spinner } from './lib';
 
 // eslint-disable-next-line react/prop-types
-function TooltipButton({ label, highlight, onClick, icon, ...rest }) {
-  const { isLoading, isError, error, run, reset } = useAsync();
+function TooltipButton({
+  label, highlight, onClick, icon, ...rest
+}) {
+  const {
+    isLoading, isError, error, run, reset,
+  } = useAsync();
 
   function handleClick() {
     if (isError) {
       reset();
     } else {
-      trace(`Click ${label}`, performance.now(), () => run(onClick()))
+      trace(`Click ${label}`, performance.now(), () => run(onClick()));
     }
   }
 
   return (
+    // eslint-disable-next-line react/jsx-filename-extension
     <Tooltip label={isError ? error.message : label}>
       <CircleButton
         css={{
-          backgroundColor: "white",
-          ":hover,:focus": {
+          backgroundColor: 'white',
+          ':hover,:focus': {
             color: isLoading
               ? colors.gray80
               : isError
-              ? colors.danger
-              : highlight,
+                ? colors.danger
+                : highlight,
           },
         }}
         disabled={isLoading}
@@ -53,21 +57,11 @@ function TooltipButton({ label, highlight, onClick, icon, ...rest }) {
 }
 
 function StatusButtons({ book }) {
-  const {user} = useAuth()
-  const queryClient = useQueryClient();
   const listItem = useListItem(book.id);
 
   const { mutateAsync: update } = useUpdateListItem();
-  const { mutateAsync: remove } = useMutation(
-    ({ id }) =>
-      client(`list-items/${id}`, { method: "DELETE", token: user.token }),
-    { onSettled: () => queryClient.invalidateQueries("list-items") }
-  );
-  const { mutateAsync: create } = useMutation(
-    ({ bookId }) =>
-      client("list-items", { data: { bookId }, token: user.token }),
-    { onSettled: () => queryClient.invalidateQueries("list-items") }
-  );
+  const { mutateAsync: remove } = useRemoveListItem();
+  const { mutateAsync: create } = useCreateListItem();
 
   return (
     <>
@@ -109,4 +103,4 @@ function StatusButtons({ book }) {
   );
 }
 
-export { StatusButtons };
+export default StatusButtons;

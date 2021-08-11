@@ -1,18 +1,30 @@
 /** @jsxImportSource @emotion/react */
 
-import React from "react";
-import { useQueryClient } from "react-query";
-import { client } from "utils/api-client";
-import { useAsync } from "utils/hooks";
-import { FullPageSpinner } from "components/lib";
-import * as colors from "styles/colors";
-import * as auth from "auth-provider";
+import React from 'react';
+import { useQueryClient } from 'react-query';
+import { client } from 'utils/api-client';
+import { useAsync } from 'utils/hooks';
+import { FullPageSpinner } from 'components/lib';
+import * as colors from 'styles/colors';
+import * as auth from 'auth-provider';
 
 const AuthContext = React.createContext();
-AuthContext.displayName = 'AuthContext'
+AuthContext.displayName = 'AuthContext';
 
-function AuthProvider({children, ...props}) {
+async function getUser(queryClient) {
+  let user = null;
+  const token = await auth.getToken();
+  if (token) {
+    const data = await client('bootstrap', { token });
+    queryClient.setQueryData('list-items', data.listItems);
+    user = data.user;
+  }
+  return user;
+}
+
+function AuthProvider({ children, ...props }) {
   const queryClient = useQueryClient();
+  const promise = getUser(queryClient);
   const {
     run,
     isLoading,
@@ -30,17 +42,8 @@ function AuthProvider({children, ...props}) {
     queryClient.clear();
     setData(null);
   };
-  async function getUser() {
-    let user = null;
-    const token = await auth.getToken();
-    if (token) {
-      const data = await client('me', {token})
-      user = data.user;
-    }
-    return user;
-  }
   React.useEffect(() => {
-    run(getUser());
+    run(promise);
   }, [run]);
   if (isLoading || isIdle) {
     return <FullPageSpinner />;
@@ -50,11 +53,11 @@ function AuthProvider({children, ...props}) {
       <div
         css={{
           color: colors.danger,
-          height: "100vh",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
+          height: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
         }}
       >
         <p>There are some errors. Please try again</p>
@@ -63,7 +66,9 @@ function AuthProvider({children, ...props}) {
     );
   }
   if (isSuccess) {
-    const value = { user, login, register, logout };
+    const value = {
+      user, login, register, logout,
+    };
     return (
       <AuthContext.Provider value={value} {...props}>{children}</AuthContext.Provider>
     );
@@ -73,14 +78,14 @@ function AuthProvider({children, ...props}) {
 function useAuth() {
   const context = React.useContext(AuthContext);
   if (!context) {
-    throw new Error("useAuth must be used within AuthContext Provider");
+    throw new Error('useAuth must be used within AuthContext Provider');
   }
   return context;
 }
 
 function useClient() {
-    const {user: {token}} = useAuth();
-    return React.useCallback((endpoint, config) => client(endpoint, {...config, token}), [token])
+  const { user: { token } } = useAuth();
+  return React.useCallback((endpoint, config) => client(endpoint, { ...config, token }), [token]);
 }
 
 export { AuthProvider, useAuth, useClient };
