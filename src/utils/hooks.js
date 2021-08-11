@@ -7,9 +7,11 @@ function useSafeDispatch(dispatch) {
   const mounted = useRef(false);
   useLayoutEffect(() => {
     mounted.current = true;
+    // eslint-disable-next-line no-return-assign
     return () => (mounted.current = false);
   }, []);
   return useCallback(
+    // eslint-disable-next-line no-void
     (...args) => (mounted.current ? dispatch(...args) : void 0),
     [dispatch],
   );

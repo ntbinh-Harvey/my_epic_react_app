@@ -1,20 +1,20 @@
 /** @jsxImportSource @emotion/react */
 
-import * as React from "react";
-import { useUpdateListItem } from "utils/list-items";
-import { ErrorMessage } from "components/lib";
-import { FaStar } from "react-icons/fa";
-import * as colors from "styles/colors";
+import * as React from 'react';
+import { useUpdateListItem } from 'utils/list-items';
+import { ErrorMessage } from 'components/lib';
+import { FaStar } from 'react-icons/fa';
+import * as colors from 'styles/colors';
 
 const visuallyHiddenCSS = {
-  border: "0",
-  clip: "rect(0 0 0 0)",
-  height: "1px",
-  margin: "-1px",
-  overflow: "hidden",
-  padding: "0",
-  position: "absolute",
-  width: "1px",
+  border: '0',
+  clip: 'rect(0 0 0 0)',
+  height: '1px',
+  margin: '-1px',
+  overflow: 'hidden',
+  padding: '0',
+  position: 'absolute',
+  width: '1px',
 };
 
 function Rating({ listItem }) {
@@ -29,12 +29,12 @@ function Rating({ listItem }) {
 
   React.useEffect(() => {
     function handleKeyDown(event) {
-      if (event.key === "Tab") {
+      if (event.key === 'Tab') {
         setIsTabbing(true);
       }
     }
-    document.addEventListener("keydown", handleKeyDown, { once: true });
-    return () => document.removeEventListener("keydown", handleKeyDown);
+    document.addEventListener('keydown', handleKeyDown, { once: true });
+    return () => document.removeEventListener('keydown', handleKeyDown);
   }, []);
 
   const rootClassName = `list-item-${listItem.id}`;
@@ -57,7 +57,7 @@ function Rating({ listItem }) {
             visuallyHiddenCSS,
             {
               [`.${rootClassName} &:checked ~ label`]: { color: colors.gray20 },
-              [`.${rootClassName} &:checked + label`]: { color: "orange" },
+              [`.${rootClassName} &:checked + label`]: { color: 'orange' },
               // !important is here because we're doing special non-css-in-js things
               // and so we have to deal with specificity and cascade. But, I promise
               // this is better than trying to make this work with JavaScript.
@@ -66,12 +66,12 @@ function Rating({ listItem }) {
                 color: `${colors.gray20} !important`,
               },
               [`.${rootClassName} &:hover + label`]: {
-                color: "orange !important",
+                color: 'orange !important',
               },
               [`.${rootClassName} &:focus + label svg`]: {
                 outline: isTabbing
-                  ? ["1px solid orange", "-webkit-focus-ring-color auto 5px"]
-                  : "initial",
+                  ? ['1px solid orange', '-webkit-focus-ring-color auto 5px']
+                  : 'initial',
               },
             },
           ]}
@@ -79,15 +79,17 @@ function Rating({ listItem }) {
         <label
           htmlFor={ratingId}
           css={{
-            cursor: "pointer",
-            color: listItem.rating < 0 ? colors.gray20 : "orange",
+            cursor: 'pointer',
+            color: listItem.rating < 0 ? colors.gray20 : 'orange',
             margin: 0,
           }}
         >
           <span css={visuallyHiddenCSS}>
-            {ratingValue} {ratingValue === 1 ? "star" : "stars"}
+            {ratingValue}
+            {' '}
+            {ratingValue === 1 ? 'star' : 'stars'}
           </span>
-          <FaStar css={{ width: "16px", margin: "0 2px" }} />
+          <FaStar css={{ width: '16px', margin: '0 2px' }} />
         </label>
       </React.Fragment>
     );
@@ -97,14 +99,14 @@ function Rating({ listItem }) {
       onClick={(e) => e.stopPropagation()}
       className={rootClassName}
       css={{
-        display: "inline-flex",
-        alignItems: "center",
+        display: 'inline-flex',
+        alignItems: 'center',
         [`&.${rootClassName}:hover input + label`]: {
-          color: "orange",
+          color: 'orange',
         },
       }}
     >
-      <span css={{ display: "flex" }}>{stars}</span>
+      <span css={{ display: 'flex' }}>{stars}</span>
       {isError ? (
         <ErrorMessage error={error} variant="inline" css={{ marginLeft: 6 }} />
       ) : null}

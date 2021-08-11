@@ -1,4 +1,4 @@
-const localStorageKey = "__auth_provider_token__";
+const localStorageKey = '__auth_provider_token__';
 
 async function getToken() {
   return window.localStorage.getItem(localStorageKey);
@@ -9,13 +9,6 @@ async function handleUserResponse({ user }) {
   return user;
 }
 
-function login({ username, password }) {
-  return client("login", { username, password }).then(handleUserResponse);
-}
-
-function register({ username, password }) {
-  return client("register", { username, password }).then(handleUserResponse);
-}
 async function logout() {
   window.localStorage.removeItem(localStorageKey);
 }
@@ -24,9 +17,9 @@ const authURL = process.env.REACT_APP_AUTH_URL;
 
 async function client(endpoint, data) {
   const config = {
-    method: "POST",
+    method: 'POST',
     body: JSON.stringify(data),
-    headers: { "Content-Type": "application/json" },
+    headers: { 'Content-Type': 'application/json' },
   };
 
   return window
@@ -35,10 +28,18 @@ async function client(endpoint, data) {
       const data = await response.json();
       if (response.ok) {
         return data;
-      } else {
-        return Promise.reject(data);
       }
+      return Promise.reject(data);
     });
 }
+function login({ username, password }) {
+  return client('login', { username, password }).then(handleUserResponse);
+}
 
-export { getToken, login, register, logout, localStorageKey };
+function register({ username, password }) {
+  return client('register', { username, password }).then(handleUserResponse);
+}
+
+export {
+  getToken, login, register, logout, localStorageKey,
+};
