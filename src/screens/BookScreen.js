@@ -7,7 +7,7 @@ import Tooltip from '@reach/tooltip';
 import { useParams } from 'react-router-dom';
 import { useUpdateListItem, useListItem } from 'utils/list-items';
 import { useBook } from 'utils/books';
-import { formatDate } from 'utils/misc';
+import formatDate from 'utils/misc';
 import * as mq from 'styles/media-queries';
 import * as colors from 'styles/colors';
 import { Textarea, ErrorMessage, Spinner } from 'components/lib';

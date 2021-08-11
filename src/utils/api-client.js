@@ -1,10 +1,10 @@
 import * as auth from 'auth-provider';
-// eslint-disable-next-line no-undef
+
 const apiURL = process.env.REACT_APP_API_URL;
 async function client(
   endpoint,
   {
-    data, queryClient, token, headers: customHeaders, ...customConfig
+    data, token, headers: customHeaders, ...customConfig
   } = {},
 ) {
   const config = {
@@ -21,8 +21,8 @@ async function client(
   return window.fetch(`${apiURL}/${endpoint}`, config).then(async (response) => {
     if (response.status === 401) {
       await auth.logout();
-      queryClient.clear();
-      // refresh the page for them
+      // eslint-disable-next-line max-len
+      // queryCache.clear(); // delete this cause Kent said that when we refresh, we will flush the cache anyway
       window.location.assign(window.location);
       // eslint-disable-next-line prefer-promise-reject-errors
       return Promise.reject({ message: 'Please re-authenticate.' });

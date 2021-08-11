@@ -527,7 +527,7 @@ function useLocalStorageState(
   return [state, setState];
 }
 
-export default install;
+export { install };
 
 /*
 eslint

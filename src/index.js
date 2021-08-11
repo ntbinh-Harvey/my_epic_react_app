@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import AppProviders from 'context';
 import { Profiler } from 'components/profiler';
-import { loadDevTools } from './dev-tools/load';
+import loadDevTools from './dev-tools/load';
 import App from './App';
 import './bootstrap';
 import reportWebVitals from './reportWebVitals';
