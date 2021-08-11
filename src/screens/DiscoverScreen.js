@@ -6,7 +6,7 @@ import { FaSearch, FaTimes } from 'react-icons/fa';
 import { useBookSearch, useRefetchBookSearchQuery } from 'utils/books';
 import * as colors from 'styles/colors';
 
-import { BookRow } from 'components/book-row';
+import BookRow from 'components/book-row';
 import { BookListUL, Spinner, Input } from 'components/lib';
 import { Profiler } from 'components/profiler';
 

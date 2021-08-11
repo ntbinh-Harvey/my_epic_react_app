@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { useAuth } from 'context/auth-context';
-import { client } from 'utils/api-client';
+import client from 'utils/api-client';
 import { setQueryDataForBook } from './books';
 
 function useListItems() {

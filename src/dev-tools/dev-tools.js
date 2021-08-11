@@ -1,5 +1,4 @@
 /* eslint-disable max-len */
-/* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable no-use-before-define */
 /** @jsxImportSource @emotion/react */
 import { Global } from '@emotion/react';
@@ -528,8 +527,7 @@ function useLocalStorageState(
   return [state, setState];
 }
 
-// eslint-disable-next-line import/prefer-default-export
-export { install };
+export default install;
 
 /*
 eslint

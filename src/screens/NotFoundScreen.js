@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import {Link} from 'components/lib'
+import { Link } from 'components/lib';
 
 function NotFoundScreen() {
   return (
@@ -16,7 +16,7 @@ function NotFoundScreen() {
         <Link to="/discover">Go home</Link>
       </div>
     </div>
-  )
+  );
 }
 
-export {NotFoundScreen}
+export default NotFoundScreen;

@@ -3,10 +3,10 @@
 import { Link } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import { useAuth } from 'context/auth-context';
-import { client } from 'utils/api-client';
+import client from 'utils/api-client';
 import * as mq from 'styles/media-queries';
 import * as colors from 'styles/colors';
-import { StatusButtons } from './status-buttons';
+import StatusButtons from './status-buttons';
 import { Rating } from './rating';
 
 function BookRow({ book }) {

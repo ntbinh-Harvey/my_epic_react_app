@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useQueryClient } from 'react-query';
-import { client } from 'utils/api-client';
+import client from 'utils/api-client';
 import { useAsync } from 'utils/hooks';
 import { FullPageSpinner } from 'components/lib';
 import * as colors from 'styles/colors';

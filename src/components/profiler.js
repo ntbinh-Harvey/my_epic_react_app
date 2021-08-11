@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import React from 'react';
-import { client } from 'utils/api-client';
+import client from 'utils/api-client';
 
 let queue = [];
 
@@ -38,5 +38,5 @@ function Profiler({ phases, metadata, ...props }) {
 }
 
 export { Profiler };
-// eslint-disable-next-line import/no-extraneous-dependencies
+
 export { unstable_trace as trace, unstable_wrap as wrap } from 'scheduler/tracing';

@@ -1,49 +1,51 @@
 /** @jsxImportSource @emotion/react */
 
-import { useMemo } from "react";
-import debounceFn from "debounce-fn";
-import { FaRegCalendarAlt } from "react-icons/fa";
-import Tooltip from "@reach/tooltip";
-import { useParams } from "react-router-dom";
-import { useUpdateListItem, useListItem } from "utils/list-items";
-import { useBook } from "utils/books";
-import { formatDate } from "utils/misc";
-import * as mq from "styles/media-queries";
-import * as colors from "styles/colors";
-import { Textarea, ErrorMessage, Spinner } from "components/lib";
-import { Rating } from "components/rating";
-import { StatusButtons } from "components/status-buttons";
-import { Profiler } from "components/profiler";
+import { useMemo } from 'react';
+import debounceFn from 'debounce-fn';
+import { FaRegCalendarAlt } from 'react-icons/fa';
+import Tooltip from '@reach/tooltip';
+import { useParams } from 'react-router-dom';
+import { useUpdateListItem, useListItem } from 'utils/list-items';
+import { useBook } from 'utils/books';
+import { formatDate } from 'utils/misc';
+import * as mq from 'styles/media-queries';
+import * as colors from 'styles/colors';
+import { Textarea, ErrorMessage, Spinner } from 'components/lib';
+import { Rating } from 'components/rating';
+import StatusButtons from 'components/status-buttons';
+import { Profiler } from 'components/profiler';
 
 function BookScreen() {
   const { bookId } = useParams();
   const { book } = useBook(bookId);
   const listItem = useListItem(book.id);
-  const { title, author, coverImageUrl, publisher, synopsis } = book;
+  const {
+    title, author, coverImageUrl, publisher, synopsis,
+  } = book;
 
   return (
     <Profiler id="Book Screen" metadata={{ bookId, listItemId: listItem?.id }}>
       <div>
         <div
           css={{
-            display: "grid",
-            gridTemplateColumns: "1fr 2fr",
-            gridGap: "2em",
-            marginBottom: "1em",
+            display: 'grid',
+            gridTemplateColumns: '1fr 2fr',
+            gridGap: '2em',
+            marginBottom: '1em',
             [mq.small]: {
-              display: "flex",
-              flexDirection: "column",
+              display: 'flex',
+              flexDirection: 'column',
             },
           }}
         >
           <img
             src={coverImageUrl}
             alt={`${title} book cover`}
-            css={{ width: "100%", maxWidth: "14rem" }}
+            css={{ width: '100%', maxWidth: '14rem' }}
           />
           <div>
-            <div css={{ display: "flex", position: "relative" }}>
-              <div css={{ flex: 1, justifyContent: "space-between" }}>
+            <div css={{ display: 'flex', position: 'relative' }}>
+              <div css={{ flex: 1, justifyContent: 'space-between' }}>
                 <h1>{title}</h1>
                 <div>
                   <i>{author}</i>
@@ -55,9 +57,9 @@ function BookScreen() {
                 css={{
                   right: 0,
                   color: colors.gray80,
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-around",
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-around',
                   minHeight: 100,
                 }}
               >
@@ -82,15 +84,16 @@ function BookScreen() {
 
 function ListItemTimeframe({ listItem }) {
   const timeframeLabel = listItem.finishDate
-    ? "Start and finish date"
-    : "Start date";
+    ? 'Start and finish date'
+    : 'Start date';
 
   return (
     <Tooltip label={timeframeLabel}>
       <div aria-label={timeframeLabel} css={{ marginTop: 6 }}>
         <FaRegCalendarAlt css={{ marginTop: -2, marginRight: 5 }} />
         <span>
-          {formatDate(listItem.startDate)}{" "}
+          {formatDate(listItem.startDate)}
+          {' '}
           {listItem.finishDate ? `— ${formatDate(listItem.finishDate)}` : null}
         </span>
       </div>
@@ -99,10 +102,12 @@ function ListItemTimeframe({ listItem }) {
 }
 
 function NotesTextarea({ listItem }) {
-  const { mutate, error, isError, isLoading } = useUpdateListItem();
+  const {
+    mutate, error, isError, isLoading,
+  } = useUpdateListItem();
   const debouncedMutate = useMemo(
     () => debounceFn(mutate, { wait: 300 }),
-    [mutate]
+    [mutate],
   );
 
   function handleNotesChange(e) {
@@ -115,11 +120,11 @@ function NotesTextarea({ listItem }) {
         <label
           htmlFor="notes"
           css={{
-            display: "inline-block",
+            display: 'inline-block',
             marginRight: 10,
-            marginTop: "0",
-            marginBottom: "0.5rem",
-            fontWeight: "bold",
+            marginTop: '0',
+            marginBottom: '0.5rem',
+            fontWeight: 'bold',
           }}
         >
           Notes
@@ -137,10 +142,10 @@ function NotesTextarea({ listItem }) {
         id="notes"
         defaultValue={listItem.notes}
         onChange={handleNotesChange}
-        css={{ width: "100%", minHeight: 300 }}
+        css={{ width: '100%', minHeight: 300 }}
       />
     </>
   );
 }
 
-export { BookScreen };
+export default BookScreen;
