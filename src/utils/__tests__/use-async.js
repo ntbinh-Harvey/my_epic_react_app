@@ -5,13 +5,12 @@ import { useAsync } from '../hooks';
 
 const previous = console.error;
 beforeEach(() => {
-  // jest.spyOn(console, 'error');
   console.error = jest.fn();
 });
 afterEach(() => {
-//   console.error.mockRestore();
   console.error = previous;
 });
+
 function deferred() {
   let resolve;
   let reject;
@@ -21,6 +20,7 @@ function deferred() {
   });
   return { promise, resolve, reject };
 }
+
 const defaultState = {
   isIdle: true,
   isLoading: false,
@@ -34,6 +34,7 @@ const defaultState = {
   run: expect.any(Function),
   reset: expect.any(Function),
 };
+
 const pendingState = {
   ...defaultState,
   status: 'pending',
@@ -64,7 +65,8 @@ test('calling run with a promise which resolves', async () => {
     p = result.current.run(promise);
   });
   expect(result.current).toEqual(pendingState);
-  const resolvedValue = Symbol('resolved value');
+  const resolvedValue = Symbol('resolved value123');
+
   await act(async () => {
     resolve(resolvedValue);
     await p;
@@ -93,7 +95,6 @@ test('calling run with a promise which rejects', async () => {
   await act(async () => {
     reject(rejectedValue);
     await p.catch(() => {
-      /* ignore error */
     });
   });
   expect(result.current).toEqual({ ...rejectedState, error: rejectedValue });

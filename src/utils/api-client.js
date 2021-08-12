@@ -21,8 +21,6 @@ async function client(
   return window.fetch(`${apiURL}/${endpoint}`, config).then(async (response) => {
     if (response.status === 401) {
       await auth.logout();
-      // eslint-disable-next-line max-len
-      // queryCache.clear(); // delete this cause Kent said that when we refresh, we will flush the cache anyway
       window.location.assign(window.location);
       // eslint-disable-next-line prefer-promise-reject-errors
       return Promise.reject({ message: 'Please re-authenticate.' });
