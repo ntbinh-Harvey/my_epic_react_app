@@ -28,8 +28,11 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "start:cli": "cross-env BROWSER=none react-scripts start",
     "build": "react-scripts build",
+    "cy:open": "cypress open",
     "test": "react-scripts test --transformIgnorePatterns 'node_modules/(?!(debounce-fn)/)'",
+    "test:e2e": "start-server-and-test start:cli http://localhost:3000/list cy:open",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -58,7 +61,11 @@
     "@testing-library/react": "^11.2.7",
     "@testing-library/react-hooks": "^7.0.1",
     "@testing-library/user-event": "^12.8.3",
+    "cypress": "^8.2.0",
+    "cypress-hmr-restarter": "^2.0.2",
     "eslint-config-airbnb": "^18.2.1",
-    "prettier": "^2.3.2"
+    "eslint-plugin-cypress": "^2.11.3",
+    "prettier": "^2.3.2",
+    "start-server-and-test": "^1.13.1"
   }
 }
